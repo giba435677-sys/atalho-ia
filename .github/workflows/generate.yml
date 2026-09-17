@@ -1,0 +1,38 @@
+name: Generate short video
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Tema do vídeo"
+        required: true
+        type: string
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate video
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TOPIC: ${{ inputs.topic }}
+        run: python -m app.main --topic "$TOPIC"
+
+      - name: Upload generated video
+        uses: actions/upload-artifact@v4
+        with:
+          name: atalho-ia-output
+          path: output/
+          retention-days: 7
