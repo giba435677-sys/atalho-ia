@@ -10,9 +10,7 @@ load_dotenv()
 
 @dataclass(frozen=True)
 class Settings:
-    tts_voice: str = "pt-br"
-    tts_speed: int = 165
-    tts_pitch: int = 48
+    tts_model: str = ".cache/piper/pt_BR-faber-medium.onnx"
     video_width: int = 1080
     video_height: int = 1920
     video_fps: int = 30
@@ -20,9 +18,7 @@ class Settings:
 
 def get_settings() -> Settings:
     return Settings(
-        tts_voice=os.getenv("TTS_VOICE", "pt-br"),
-        tts_speed=int(os.getenv("TTS_SPEED", "165")),
-        tts_pitch=int(os.getenv("TTS_PITCH", "48")),
+        tts_model=os.getenv("TTS_MODEL", ".cache/piper/pt_BR-faber-medium.onnx"),
         video_width=int(os.getenv("VIDEO_WIDTH", "1080")),
         video_height=int(os.getenv("VIDEO_HEIGHT", "1920")),
         video_fps=int(os.getenv("VIDEO_FPS", "30")),
