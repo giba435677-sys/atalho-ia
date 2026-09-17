@@ -1,28 +1,37 @@
 from __future__ import annotations
 
+import shutil
+import subprocess
 from pathlib import Path
-
-from openai import OpenAI
 
 
 def synthesize_speech(
-    client: OpenAI,
     text: str,
     output_path: Path,
-    model: str,
-    voice: str,
+    voice: str = "pt-br",
+    speed: int = 165,
+    pitch: int = 48,
 ) -> Path:
+    if not shutil.which("espeak-ng"):
+        raise RuntimeError("espeak-ng não encontrado no PATH.")
+
+    output_path = output_path.with_suffix(".wav")
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with client.audio.speech.with_streaming_response.create(
-        model=model,
-        voice=voice,
-        input=text,
-        instructions=(
-            "Fale em português do Brasil, com energia, clareza e ritmo de vídeo curto. "
-            "Evite tom de locutor artificial. Faça pequenas pausas naturais."
-        ),
-    ) as response:
-        response.stream_to_file(output_path)
+    cmd = [
+        "espeak-ng",
+        "-v",
+        voice,
+        "-s",
+        str(speed),
+        "-p",
+        str(pitch),
+        "-w",
+        str(output_path),
+        text,
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"espeak-ng falhou: {result.stderr.strip()}")
 
     return output_path
