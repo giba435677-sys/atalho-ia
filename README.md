@@ -1,23 +1,28 @@
 # Atalho IA
 
-MVP de automação para gerar vídeos verticais curtos (Shorts/Reels/TikTok) com o menor custo possível e pouca intervenção manual.
+MVP de automação para gerar vídeos verticais curtos (Shorts/Reels/TikTok) com pouca intervenção manual e sem depender de API paga.
 
-## O que esta primeira versão faz
+## O que esta versão faz
 
 1. Recebe um tema.
-2. Gera roteiro de 45–60 segundos em JSON.
-3. Gera uma narração com OpenAI TTS.
-4. Cria cartões verticais para cada trecho do roteiro sem pagar por imagens.
+2. Gera um roteiro local estruturado para vídeo curto.
+3. Gera narração local em português com `espeak-ng`.
+4. Cria cartões verticais para cada trecho do roteiro.
 5. Monta o vídeo 1080x1920 com FFmpeg.
 6. Salva roteiro, áudio, imagens e MP4 em `output/`.
+7. No GitHub Actions, empacota tudo em um artefato para download.
 
-A publicação automática e a busca de imagens/B-roll entram depois que este núcleo estiver validado.
+A publicação automática e a melhoria visual entram nas próximas fases.
 
-## Requisitos
+## Custo desta fase
+
+Esta versão não usa OpenAI API, ElevenLabs ou outro serviço pago de IA. O núcleo roda com ferramentas locais e GitHub Actions.
+
+## Requisitos locais
 
 - Python 3.11+
-- FFmpeg instalado e disponível no PATH
-- `OPENAI_API_KEY`
+- FFmpeg
+- espeak-ng
 
 ## Instalação
 
@@ -30,7 +35,6 @@ Windows:
 ```powershell
 .venv\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env
 ```
 
 Linux/macOS:
@@ -38,25 +42,15 @@ Linux/macOS:
 ```bash
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
 ```
-
-Edite o arquivo `.env` e coloque sua chave.
 
 ## Executar
 
 ```bash
-python -m app.main --topic "História da Roma Antiga"
+python -m app.main --topic "3 formas práticas de usar IA para economizar tempo no trabalho"
 ```
 
 O vídeo será criado em `output/<data-hora>/video.mp4`.
-
-## Modelos padrão
-
-- Roteiro: `gpt-5.6-luna`, priorizando baixo custo.
-- Voz: `gpt-4o-mini-tts`.
-
-Os dois podem ser alterados no `.env`.
 
 ## Estrutura
 
@@ -77,17 +71,21 @@ requirements.txt
 
 ## Automação no GitHub Actions
 
-O workflow `generate.yml` permite disparar a geração manualmente no GitHub Actions informando um tema. Para funcionar, cadastre `OPENAI_API_KEY` em:
+Abra a aba `Actions`, escolha `Generate short video`, clique em `Run workflow` e informe o tema. Nenhuma chave de API é necessária nesta versão.
 
-`Settings > Secrets and variables > Actions > New repository secret`
+O resultado fica disponível como artefato chamado `atalho-ia-output`.
 
-Nesta fase, o workflow não publica em redes sociais e não possui cron automático por padrão para evitar consumo inesperado de API.
+## Limitação atual
+
+Para zerar o custo, a primeira versão usa roteiro baseado em estruturas locais e uma voz sintética local. Isso valida o fluxo completo sem cobrança. Depois podemos melhorar a qualidade com modelos locais/open-source e B-roll gratuito sem voltar a depender de cartão.
 
 ## Próxima fase
 
-- puxar imagens/B-roll gratuitos;
+- melhorar a voz sem API paga;
+- adicionar imagens/B-roll gratuitos;
 - inserir legendas dinâmicas;
-- gerar títulos, descrição e hashtags;
+- variar automaticamente os roteiros;
+- gerar títulos, descrições e hashtags em lote;
 - publicar automaticamente no YouTube Shorts;
 - escolher temas automaticamente;
-- registrar visualizações e aprender quais temas performam melhor.
+- registrar visualizações e aprender quais formatos performam melhor.
