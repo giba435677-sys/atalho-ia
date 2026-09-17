@@ -8,7 +8,7 @@ class Segment:
     narration: str
     on_screen_text: str
     image_prompt: str
-    seconds: float
+    seconds: float = 0.0
 
 
 @dataclass
@@ -24,74 +24,63 @@ class VideoScript:
         return " ".join(s.narration.strip() for s in self.segments if s.narration.strip())
 
 
-def _segment(narration: str, on_screen_text: str, seconds: float = 4.4) -> Segment:
+def _segment(narration: str, on_screen_text: str) -> Segment:
     return Segment(
         narration=narration,
         on_screen_text=on_screen_text,
-        image_prompt="vertical 9:16 clean modern productivity visual, no embedded text",
-        seconds=seconds,
+        image_prompt="original abstract vertical motion graphic, no stock media, no embedded text",
     )
 
 
-def _ai_productivity_script(topic: str) -> VideoScript:
+def _ai_productivity_script() -> VideoScript:
     segments = [
         _segment(
-            "Você não precisa trabalhar mais rápido. Precisa parar de repetir tarefas que a inteligência artificial já consegue acelerar.",
-            "PARE DE REPETIR",
-            4.8,
+            "Se você usa inteligência artificial só para fazer perguntas, provavelmente está deixando tempo na mesa.",
+            "VOCÊ ESTÁ PERDENDO TEMPO",
         ),
         _segment(
-            "Primeira forma: use a IA para resumir e-mails longos, relatórios e documentos antes de começar a responder.",
-            "1. RESUMA PRIMEIRO",
+            "Primeiro: jogue e-mails, relatórios e documentos longos nela e peça quatro coisas: resumo, riscos, decisões e pendências.",
+            "1 • RESUMA ANTES DE LER TUDO",
         ),
         _segment(
-            "Em vez de ler tudo do zero, peça os pontos principais, os riscos, as decisões e as ações pendentes.",
-            "PONTOS, RISCOS, AÇÕES",
+            "Você para de caçar informação e começa por aquilo que realmente exige sua atenção.",
+            "FOQUE NO QUE EXIGE DECISÃO",
         ),
         _segment(
-            "Segunda forma: transforme reuniões e anotações soltas em listas claras de tarefas, responsáveis e prazos.",
-            "2. ORGANIZE REUNIÕES",
+            "Segundo: depois de uma reunião, transforme as anotações em tarefas, responsáveis e prazos.",
+            "2 • SAIA COM AÇÕES CLARAS",
         ),
         _segment(
-            "Isso reduz retrabalho e aquele tempo perdido tentando lembrar o que ficou combinado com cada pessoa.",
-            "MENOS RETRABALHO",
+            "Isso reduz o clássico quem ficou de fazer o quê e corta muito retrabalho.",
+            "MENOS DÚVIDA • MENOS RETRABALHO",
         ),
         _segment(
-            "Terceira forma: crie modelos prontos para tarefas repetitivas, como e-mails, relatórios, atas e análises.",
-            "3. CRIE MODELOS",
+            "Terceiro: crie modelos para e-mails, atas, relatórios e análises que você repete toda semana.",
+            "3 • CRIE MODELOS REUTILIZÁVEIS",
         ),
         _segment(
-            "Você informa os dados do dia e deixa o modelo cuidar da primeira versão para você revisar rapidamente.",
-            "DADOS → PRIMEIRA VERSÃO",
+            "No dia a dia, você só troca os dados e revisa a primeira versão.",
+            "TROQUE OS DADOS • REVISE",
         ),
         _segment(
-            "O segredo é não automatizar tudo de uma vez. Escolha uma tarefa que você repete quase todos os dias.",
-            "COMECE POR UMA TAREFA",
+            "Não tente automatizar tudo. Escolha uma tarefa repetitiva e teste por uma semana.",
+            "COMECE PEQUENO",
         ),
         _segment(
-            "Meça quanto tempo ela consome hoje e teste um fluxo mais simples durante alguns dias.",
-            "MEÇA O TEMPO",
+            "Se economizar tempo e mantiver qualidade, padronize. Depois passe para a próxima.",
+            "FUNCIONOU? PADRONIZE",
         ),
         _segment(
-            "Se funcionar, padronize. Só depois passe para a próxima tarefa e mantenha o que realmente economiza tempo.",
-            "PADRONIZE O QUE FUNCIONA",
-        ),
-        _segment(
-            "A economia aparece na soma de pequenos atalhos usados todos os dias, e não em uma ferramenta milagrosa.",
-            "PEQUENOS ATALHOS",
-        ),
-        _segment(
-            "Se você quer mais ideias práticas para trabalhar melhor com automação, acompanhe o Atalho IA.",
-            "ACOMPANHE O ATALHO IA",
-            4.8,
+            "Pequenos atalhos viram horas no mês. Salve este vídeo e acompanhe o Atalho IA.",
+            "SALVE • TESTE • ACOMPANHE",
         ),
     ]
     return VideoScript(
-        title=topic[:70],
+        title="3 jeitos de usar IA para ganhar tempo no trabalho",
         hook=segments[0].narration,
         description=(
-            "Três usos simples de inteligência artificial para reduzir tarefas repetitivas "
-            "e ganhar tempo no trabalho, começando sem complicação."
+            "Três usos práticos de inteligência artificial para reduzir tarefas repetitivas, "
+            "organizar melhor o trabalho e ganhar tempo sem complicar a rotina."
         ),
         hashtags=["#InteligenciaArtificial", "#Produtividade", "#Automacao", "#Trabalho", "#AtalhoIA"],
         segments=segments,
@@ -101,32 +90,29 @@ def _ai_productivity_script(topic: str) -> VideoScript:
 def _generic_script(topic: str) -> VideoScript:
     short_topic = topic.strip() or "este assunto"
     segments = [
-        _segment(f"Quer entender {short_topic} sem complicar? Comece pelo ponto que realmente muda sua decisão.", "COMECE PELO ESSENCIAL"),
-        _segment("Primeiro, transforme o assunto em uma pergunta clara. Uma boa pergunta evita perder tempo com informação que não ajuda.", "FAÇA A PERGUNTA CERTA"),
-        _segment("Depois, separe fatos, opiniões e promessas. Misturar essas três coisas costuma criar mais confusão do que clareza.", "FATO ≠ OPINIÃO"),
-        _segment("Procure a consequência prática: o que muda no seu trabalho, no seu bolso, no seu tempo ou na sua rotina?", "O QUE MUDA NA PRÁTICA?"),
-        _segment("Evite decidir apenas pelo primeiro exemplo. Compare pelo menos duas alternativas usando o mesmo critério.", "COMPARE IGUAL COM IGUAL"),
-        _segment("Se houver números, confira a origem e a data. Um dado antigo pode parecer preciso e ainda assim levar à conclusão errada.", "CONFIRA DATA E FONTE"),
-        _segment("Quando algo parecer bom demais, procure a condição escondida: prazo, limite, custo, risco ou dependência.", "PROCURE A CONDIÇÃO"),
-        _segment("Agora reduza tudo a três pontos: benefício, risco e próxima ação. Isso força a análise a ficar objetiva.", "BENEFÍCIO • RISCO • AÇÃO"),
-        _segment("Se você ainda estiver em dúvida, faça um teste pequeno antes de assumir um compromisso maior.", "TESTE PEQUENO PRIMEIRO"),
-        _segment("O objetivo não é saber tudo. É ter informação suficiente para escolher o próximo passo com menos desperdício.", "DECIDA O PRÓXIMO PASSO"),
-        _segment("Salve este método e reutilize quando precisar analisar um tema novo com rapidez e clareza.", "SALVE ESTE MÉTODO"),
-        _segment("Para mais atalhos práticos de análise e automação, acompanhe o Atalho IA.", "ACOMPANHE O ATALHO IA"),
+        _segment(f"Quer entender {short_topic} sem complicar? Comece pelo que realmente muda sua decisão.", "COMECE PELO ESSENCIAL"),
+        _segment("Transforme o assunto em uma pergunta clara. Isso elimina muita informação que parece útil, mas não ajuda.", "FAÇA A PERGUNTA CERTA"),
+        _segment("Separe fatos, opiniões e promessas. Misturar essas três coisas costuma criar mais confusão do que clareza.", "FATO NÃO É OPINIÃO"),
+        _segment("Procure a consequência prática: o que muda no seu tempo, no seu dinheiro ou na sua rotina?", "O QUE MUDA NA PRÁTICA?"),
+        _segment("Compare alternativas usando o mesmo critério e não apenas o primeiro exemplo que apareceu.", "COMPARE IGUAL COM IGUAL"),
+        _segment("Quando houver números, confira a origem e a data. Dado antigo também pode enganar.", "CONFIRA DATA E FONTE"),
+        _segment("Agora reduza tudo a três pontos: benefício, risco e próxima ação.", "BENEFÍCIO • RISCO • AÇÃO"),
+        _segment("Se ainda houver dúvida, faça um teste pequeno antes de assumir um compromisso maior.", "TESTE PEQUENO PRIMEIRO"),
+        _segment("O objetivo não é saber tudo. É escolher o próximo passo com menos desperdício.", "DECIDA O PRÓXIMO PASSO"),
+        _segment("Salve este método e acompanhe o Atalho IA para mais ideias práticas.", "SALVE • ACOMPANHE"),
     ]
     return VideoScript(
         title=short_topic[:70],
         hook=segments[0].narration,
-        description=f"Um método simples para analisar {short_topic} com mais clareza e menos perda de tempo.",
+        description=f"Um método direto para analisar {short_topic} com mais clareza e menos perda de tempo.",
         hashtags=["#Dicas", "#Produtividade", "#Automacao", "#Aprendizado", "#AtalhoIA"],
         segments=segments,
     )
 
 
 def generate_script(topic: str) -> VideoScript:
-    normalized = topic.lower()
+    normalized = f" {topic.lower()} "
     ai_terms = (" ia ", "ia para", "inteligência artificial", "inteligencia artificial", "chatgpt", "automação", "automacao")
-    padded = f" {normalized} "
-    if any(term in padded for term in ai_terms):
-        return _ai_productivity_script(topic.strip())
-    return _generic_script(topic.strip())
+    if any(term in normalized for term in ai_terms):
+        return _ai_productivity_script()
+    return _generic_script(topic)
