@@ -1,5 +1,5 @@
-# Primeiro teste gratuito do Atalho IA
+# Teste de publicação do Atalho IA — V2
 
-Tema: 3 formas práticas de usar IA para economizar 1 hora por dia no trabalho.
+Tema: 3 formas práticas de usar IA para economizar tempo no trabalho.
 
-Execução sem API paga: roteiro local + voz local + FFmpeg.
+Objetivo: gerar pacote pronto para publicação com voz neural brasileira, movimento, legendas, capa e texto do post, sem API paga.
