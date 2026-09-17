@@ -4,8 +4,6 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-from openai import OpenAI
-
 from .config import get_settings
 from .script_generator import generate_script
 from .tts import synthesize_speech
@@ -13,7 +11,7 @@ from .video import build_video
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Atalho IA - gerador de vídeos curtos")
+    parser = argparse.ArgumentParser(description="Atalho IA - gerador gratuito de vídeos curtos")
     parser.add_argument("--topic", required=True, help="Tema do vídeo")
     parser.add_argument("--output", default="output", help="Diretório base de saída")
     return parser.parse_args()
@@ -22,22 +20,21 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     settings = get_settings()
-    client = OpenAI(api_key=settings.openai_api_key)
 
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = Path(args.output) / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"[1/3] Gerando roteiro: {args.topic}")
-    script = generate_script(client, args.topic, settings.script_model)
+    print(f"[1/3] Gerando roteiro local: {args.topic}")
+    script = generate_script(args.topic)
 
-    print("[2/3] Gerando narração")
+    print("[2/3] Gerando narração local")
     audio_path = synthesize_speech(
-        client=client,
         text=script.narration,
-        output_path=out_dir / "narration.mp3",
-        model=settings.tts_model,
+        output_path=out_dir / "narration.wav",
         voice=settings.tts_voice,
+        speed=settings.tts_speed,
+        pitch=settings.tts_pitch,
     )
 
     print("[3/3] Montando vídeo")
