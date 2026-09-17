@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .config import get_settings
 from .script_generator import generate_script
-from .tts import synthesize_speech
+from .tts import concatenate_audio, synthesize_segments
 from .video import build_video
 
 
@@ -25,29 +25,32 @@ def main() -> None:
     out_dir = Path(args.output) / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"[1/3] Gerando roteiro local: {args.topic}")
+    print(f"[1/4] Preparando roteiro: {args.topic}")
     script = generate_script(args.topic)
 
-    print("[2/3] Gerando narração local")
-    audio_path = synthesize_speech(
-        text=script.narration,
-        output_path=out_dir / "narration.wav",
-        voice=settings.tts_voice,
-        speed=settings.tts_speed,
-        pitch=settings.tts_pitch,
+    print("[2/4] Gerando voz neural em português do Brasil")
+    clips = synthesize_segments(
+        texts=[segment.narration for segment in script.segments],
+        out_dir=out_dir / "audio",
+        model_path=Path(settings.tts_model),
     )
+    narration_path = concatenate_audio(clips, out_dir / "narration.wav")
 
-    print("[3/3] Montando vídeo")
+    print("[3/4] Montando vídeo, movimento e legendas")
     video_path = build_video(
         script=script,
-        audio_path=audio_path,
+        audio_path=narration_path,
+        segment_durations=[clip.duration for clip in clips],
         out_dir=out_dir,
         width=settings.video_width,
         height=settings.video_height,
         fps=settings.video_fps,
     )
 
-    print(f"Concluído: {video_path.resolve()}")
+    print("[4/4] Pacote de publicação concluído")
+    print(f"Vídeo: {video_path.resolve()}")
+    print(f"Texto do post: {(out_dir / 'post.txt').resolve()}")
+    print(f"Capa: {(out_dir / 'cover.jpg').resolve()}")
 
 
 if __name__ == "__main__":
