@@ -1,5 +1,8 @@
 name: Generate publish-ready short
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -45,6 +48,27 @@ jobs:
           TOPIC: ${{ github.event.inputs.topic || '3 formas práticas de usar IA para economizar tempo no trabalho' }}
           TTS_MODEL: .cache/piper/pt_BR-faber-medium.onnx
         run: python -m app.main --topic "$TOPIC"
+
+      - name: Publish media to public repository path
+        shell: bash
+        run: |
+          set -euo pipefail
+          RUN_DIR=$(find output -mindepth 1 -maxdepth 1 -type d | sort | tail -n 1)
+          PUB_DIR="publish/${GITHUB_RUN_ID}"
+          mkdir -p "$PUB_DIR"
+          cp "$RUN_DIR/video_publish.mp4" "$PUB_DIR/video_publish.mp4"
+          cp "$RUN_DIR/cover.jpg" "$PUB_DIR/cover.jpg"
+          cp "$RUN_DIR/post.txt" "$PUB_DIR/post.txt"
+          cp "$RUN_DIR/captions.srt" "$PUB_DIR/captions.srt"
+          cp "$RUN_DIR/metadata.json" "$PUB_DIR/metadata.json"
+
+          printf '%s\n' "$GITHUB_RUN_ID" > publish/LATEST_RUN_ID.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add publish/
+          git commit -m "media: publish run ${GITHUB_RUN_ID}"
+          git push
 
       - name: Upload publication package
         uses: actions/upload-artifact@v4
